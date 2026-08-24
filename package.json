@@ -1,0 +1,19 @@
+{
+  "name": "todo-app",
+  "private": true,
+  "description": "Full-stack todo app: Express API, Next.js client, Playwright e2e.",
+  "workspaces": [
+    "server",
+    "client",
+    "e2e"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace server",
+    "dev:client": "npm run dev --workspace client",
+    "test": "npm test --workspace server && npm test --workspace client",
+    "test:server": "npm test --workspace server",
+    "test:client": "npm test --workspace client",
+    "test:e2e": "npm test --workspace e2e",
+    "test:all": "npm run test && npm run test:e2e"
+  }
+}
