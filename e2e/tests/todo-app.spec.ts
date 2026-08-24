@@ -33,7 +33,7 @@ test('edits a todo title via double-click', async ({ page }) => {
   await page.getByRole('button', { name: 'Add task' }).click();
 
   await page.getByText('Old title').dblclick();
-  const editInput = page.getByDisplayValue('Old title');
+  const editInput = page.getByLabel('Edit task title');
   await editInput.fill('New title');
   await editInput.press('Enter');
 
@@ -102,7 +102,7 @@ test('a full task lifecycle: add, edit, complete, filter, then delete', async ({
   await expect(page.getByText(/1 left · 0 done/i)).toBeVisible();
 
   await page.getByText('Draft the proposal').dblclick();
-  const editInput = page.getByDisplayValue('Draft the proposal');
+  const editInput = page.getByLabel('Edit task title');
   await editInput.fill('Send the proposal');
   await editInput.press('Enter');
   await expect(page.getByText('Send the proposal')).toBeVisible();
