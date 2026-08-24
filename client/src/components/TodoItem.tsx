@@ -85,6 +85,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
             onChange={(e) => setDraft(e.target.value)}
             onBlur={commitEdit}
             onKeyDown={handleKeyDown}
+            aria-label="Edit task title"
             className="w-full border-b border-secondary bg-transparent font-serif text-base text-foreground outline-none"
           />
         ) : (
