@@ -1,4 +1,5 @@
 import { TodoStore } from '../src/store/todo.store';
+import { Todo } from '../src/models/todo.model';
 
 describe('TodoStore', () => {
   let store: TodoStore;
@@ -35,7 +36,7 @@ describe('TodoStore', () => {
     store.create({ title: 'First' });
     store.create({ title: 'Second' });
     const all = store.getAll();
-    expect(all.map((t) => t.title)).toEqual(['First', 'Second']);
+    expect(all.map((t: Todo) => t.title)).toEqual(['First', 'Second']);
   });
 
   it('finds a todo by id', () => {
@@ -58,11 +59,14 @@ describe('TodoStore', () => {
 
   it('bumps updatedAt (and not createdAt) when updating', async () => {
     const created = store.create({ title: 'Track time' });
-    await new Promise((r) => setTimeout(r, 5));
+    const originalCreatedAt = created.createdAt;
+    const originalUpdatedAt = created.updatedAt;
+
+    await new Promise((r) => setTimeout(r, 15));
     const updated = store.update(created.id, { completed: true });
 
-    expect(updated?.createdAt).toBe(created.createdAt);
-    expect(updated?.updatedAt).not.toBe(created.updatedAt);
+    expect(updated?.createdAt).toBe(originalCreatedAt);
+    expect(updated?.updatedAt).not.toBe(originalUpdatedAt);
   });
 
   it('returns null when updating a non-existent todo', () => {
@@ -105,6 +109,6 @@ describe('TodoStore', () => {
     const removed = store.clearCompleted();
 
     expect(removed).toBe(1);
-    expect(store.getAll().map((t) => t.title)).toEqual(['B']);
+    expect(store.getAll().map((t: Todo) => t.title)).toEqual(['B']);
   });
 });
