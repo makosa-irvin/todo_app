@@ -9,10 +9,15 @@ export class TodoStore {
   private todos: Todo[] = [];
 
   getAll(): Todo[] {
-    return [...this.todos];
+    return this.todos.map((t) => ({ ...t }));
   }
 
   getById(id: string): Todo | undefined {
+    const todo = this.todos.find((t) => t.id === id);
+    return todo ? { ...todo } : undefined;
+  }
+
+  private findInternal(id: string): Todo | undefined {
     return this.todos.find((t) => t.id === id);
   }
 
@@ -32,11 +37,11 @@ export class TodoStore {
     };
 
     this.todos.push(todo);
-    return todo;
+    return { ...todo };
   }
 
   update(id: string, input: UpdateTodoInput): Todo | null {
-    const todo = this.getById(id);
+    const todo = this.findInternal(id);
     if (!todo) return null;
 
     if (input.title !== undefined) {
@@ -52,15 +57,15 @@ export class TodoStore {
     }
 
     todo.updatedAt = new Date().toISOString();
-    return todo;
+    return { ...todo };
   }
 
   toggle(id: string): Todo | null {
-    const todo = this.getById(id);
+    const todo = this.findInternal(id);
     if (!todo) return null;
     todo.completed = !todo.completed;
     todo.updatedAt = new Date().toISOString();
-    return todo;
+    return { ...todo };
   }
 
   delete(id: string): boolean {
