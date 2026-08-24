@@ -18,11 +18,13 @@ npm run build && npm start   # compiled JS
 ## Test
 
 ```bash
-npm test          # run once
+npm test                # everything
+npm run test:unit       # tests/unit only — fast, no HTTP
+npm run test:integration  # tests/integration only — full app via supertest
 npm run test:watch
 ```
 
-30 tests: 16 unit tests on `TodoStore`, 14 integration tests on the API routes via supertest.
+30 tests: 16 unit tests on `TodoStore` (`tests/unit/`), 14 integration tests on the API routes via supertest (`tests/integration/`).
 
 ## Endpoints
 
@@ -47,8 +49,8 @@ src/
   app.ts                      App factory (used directly by tests, no listen())
   server.ts                   Entry point — creates the app and listens
 tests/
-  todo.store.test.ts          Unit tests for the store
-  todos.api.test.ts           Integration tests against the app via supertest
+  unit/todo.store.test.ts         Unit tests for the store, no HTTP involved
+  integration/todos.api.test.ts   Integration tests against the app via supertest
 ```
 
 `createApp()` takes an optional `TodoStore` so each test suite gets a fresh,

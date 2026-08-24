@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { createApp } from '../src/app';
-import { TodoStore } from '../src/store/todo.store';
+import { createApp } from '../../src/app';
+import { TodoStore } from '../../src/store/todo.store';
 
 describe('Todos API', () => {
   let app: ReturnType<typeof createApp>;

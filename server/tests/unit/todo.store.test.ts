@@ -1,5 +1,5 @@
-import { TodoStore } from '../src/store/todo.store';
-import { Todo } from '../src/models/todo.model';
+import { TodoStore } from '../../src/store/todo.store';
+import { Todo } from '../../src/models/todo.model';
 
 describe('TodoStore', () => {
   let store: TodoStore;
