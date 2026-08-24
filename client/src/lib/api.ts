@@ -1,0 +1,51 @@
+import type { Todo } from '@/types/todo';
+
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+async function parseJsonOrThrow(res: Response) {
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(body?.error || `Request failed with status ${res.status}`);
+  }
+  return body;
+}
+
+export async function fetchTodos(): Promise<Todo[]> {
+  const res = await fetch('/api/todos', { method: 'GET' });
+  return parseJsonOrThrow(res);
+}
+
+export async function createTodo(title: string): Promise<Todo> {
+  const res = await fetch('/api/todos', {
+    method: 'POST',
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ title }),
+  });
+  return parseJsonOrThrow(res);
+}
+
+export async function updateTodo(id: string, changes: { title?: string; completed?: boolean }): Promise<Todo> {
+  const res = await fetch(`/api/todos/${id}`, {
+    method: 'PUT',
+    headers: JSON_HEADERS,
+    body: JSON.stringify(changes),
+  });
+  return parseJsonOrThrow(res);
+}
+
+export async function toggleTodo(id: string): Promise<Todo> {
+  const res = await fetch(`/api/todos/${id}/toggle`, { method: 'PATCH' });
+  return parseJsonOrThrow(res);
+}
+
+export async function deleteTodo(id: string): Promise<void> {
+  const res = await fetch(`/api/todos/${id}`, { method: 'DELETE' });
+  if (!res.ok) {
+    throw new Error(`Request failed with status ${res.status}`);
+  }
+}
+
+export async function clearCompletedTodos(): Promise<{ removed: number }> {
+  const res = await fetch('/api/todos/completed/clear', { method: 'DELETE' });
+  return parseJsonOrThrow(res);
+}
