@@ -117,3 +117,23 @@ test('a full task lifecycle: add, edit, complete, filter, then delete', async ({
   await page.getByRole('button', { name: 'Delete task' }).click();
   await expect(page.getByText(/nothing on the list/i)).toBeVisible();
 });
+
+test('persists todos across a page reload (real backend, not local component state)', async ({ page }) => {
+  await page.getByPlaceholder(/add a task/i).fill('Persisted task');
+  await page.getByRole('button', { name: 'Add task' }).click();
+  await expect(page.getByText('Persisted task')).toBeVisible();
+
+  await page.reload();
+
+  await expect(page.getByText('Persisted task')).toBeVisible();
+});
+
+test('shows an inline error when the API is unreachable', async ({ page, context }) => {
+  // beforeEach already navigated successfully; abort the *next* load's
+  // request specifically so this test controls exactly which fetch fails.
+  await context.route('**/api/todos', (route) => route.abort());
+
+  await page.goto('/');
+
+  await expect(page.getByRole('alert')).toBeVisible();
+});
