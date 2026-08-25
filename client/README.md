@@ -29,6 +29,12 @@ npm run test:watch
 37 tests covering the API client, the `useTodos` state hook, and every
 component (Button, AddTodoForm, TodoItem, TodoList).
 
+## Deploy
+
+See [`../DEPLOYMENT.md`](../DEPLOYMENT.md) for deploying this to Vercel.
+Short version: set Root Directory to `client` and add one env var,
+`NEXT_PUBLIC_API_URL`, pointing at your deployed Render backend.
+
 ## Architecture
 
 ```

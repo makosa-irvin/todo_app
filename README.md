@@ -26,7 +26,14 @@ npm run dev:client   # Web app on :3000
 
 Open http://localhost:3000. The client proxies `/api/*` requests to the
 Express server via a rewrite in `next.config.mjs`, so no CORS setup or env
-vars are needed for local development.
+vars are needed for local development. (In production this changes — see
+Deployment below.)
+
+## Deployment
+
+See [`DEPLOYMENT.md`](./DEPLOYMENT.md): Render for the API, Vercel for the
+client, linked by one env var (`NEXT_PUBLIC_API_URL`). `render.yaml` at the
+repo root is a ready-to-use Blueprint for the API side.
 
 ## Run all tests
 
@@ -41,13 +48,13 @@ npm run test:all     # server + client + e2e
 
 Or per-package as before: `cd server && npm test`, etc.
 
-67 unit/integration tests + 8 end-to-end tests, all passing:
+68 unit/integration tests + 8 end-to-end tests, all passing:
 
 | Suite | Tests | Covers |
 |---|---|---|
 | `server/tests/unit/todo.store.test.ts` | 16 | In-memory store: CRUD, validation, timestamps |
 | `server/tests/integration/todos.api.test.ts` | 14 | REST endpoints via supertest |
-| `client/src/lib/__tests__/api.test.ts` | 7 | Fetch wrapper, mocked `fetch` |
+| `client/src/lib/__tests__/api.test.ts` | 8 | Fetch wrapper, mocked `fetch`, including the NEXT_PUBLIC_API_URL prefix used in production |
 | `client/src/hooks/__tests__/useTodos.test.ts` | 10 | State hook: load/add/toggle/edit/delete/filter |
 | `client/src/components/ui/__tests__/button.test.tsx` | 4 | Button primitive |
 | `client/src/components/__tests__/AddTodoForm.test.tsx` | 4 | New-entry form |

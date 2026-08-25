@@ -38,6 +38,13 @@ npm run test:watch
 | DELETE | `/api/todos/:id`             | Delete a todo                  |
 | DELETE | `/api/todos/completed/clear` | Remove all completed todos     |
 
+## Deploy
+
+See [`../DEPLOYMENT.md`](../DEPLOYMENT.md) for deploying this to Render.
+Short version: no code changes needed — `server.ts` already reads
+`process.env.PORT`, and `render.yaml` at the repo root is a ready-to-use
+Blueprint.
+
 ## Architecture
 
 ```
