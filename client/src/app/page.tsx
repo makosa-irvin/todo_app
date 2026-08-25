@@ -41,7 +41,10 @@ export default function Page() {
               Opening the ledger…
             </p>
           ) : error ? (
-            <p className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+            <p
+              role="alert"
+              className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+            >
               {error}
             </p>
           ) : (
