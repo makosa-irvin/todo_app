@@ -64,15 +64,15 @@ test('filters todos by active and completed', async ({ page }) => {
   // The second row's checkbox belongs to "Done task".
   await page.getByRole('checkbox', { name: 'Mark as done' }).nth(1).click();
 
-  await page.getByRole('button', { name: 'Active' }).click();
+  await page.getByRole('button', { name: 'Active', exact: true }).click();
   await expect(page.getByText('Active task')).toBeVisible();
   await expect(page.getByText('Done task')).not.toBeVisible();
 
-  await page.getByRole('button', { name: 'Completed' }).click();
+  await page.getByRole('button', { name: 'Completed', exact: true }).click();
   await expect(page.getByText('Done task')).toBeVisible();
   await expect(page.getByText('Active task')).not.toBeVisible();
 
-  await page.getByRole('button', { name: 'All' }).click();
+  await page.getByRole('button', { name: 'All', exact: true }).click();
   await expect(page.getByText('Active task')).toBeVisible();
   await expect(page.getByText('Done task')).toBeVisible();
 });
@@ -110,10 +110,10 @@ test('a full task lifecycle: add, edit, complete, filter, then delete', async ({
   await page.getByRole('checkbox', { name: 'Mark as done' }).click();
   await expect(page.getByText(/0 left · 1 done/i)).toBeVisible();
 
-  await page.getByRole('button', { name: 'Active' }).click();
+  await page.getByRole('button', { name: 'Active', exact: true }).click();
   await expect(page.getByText('Send the proposal')).not.toBeVisible();
 
-  await page.getByRole('button', { name: 'All' }).click();
+  await page.getByRole('button', { name: 'All', exact: true }).click();
   await page.getByRole('button', { name: 'Delete task' }).click();
   await expect(page.getByText(/nothing on the list/i)).toBeVisible();
 });
