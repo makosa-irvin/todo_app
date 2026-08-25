@@ -10,7 +10,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "test:watch": "jest --watch",
     "test:unit": "jest --runInBand tests/unit",
-    "test:integration": "jest --runInBand tests/integration"
+    "test:integration": "jest --runInBand tests/integration",
+    "test:coverage": "jest --runInBand --coverage"
   },
   "keywords": [],
   "author": "",
