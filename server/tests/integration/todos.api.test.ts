@@ -47,6 +47,12 @@ describe('Todos API', () => {
       const res = await request(app).post('/api/todos').send({ title: '   ' });
       expect(res.status).toBe(400);
     });
+
+    it('returns 400 when title is not a string', async () => {
+      const res = await request(app).post('/api/todos').send({ title: 123 });
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe('Title is required');
+    });
   });
 
   describe('PUT /api/todos/:id', () => {
@@ -71,6 +77,15 @@ describe('Todos API', () => {
       const created = store.create({ title: 'Valid' });
       const res = await request(app).put(`/api/todos/${created.id}`).send({ title: '  ' });
       expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when completed is not a boolean', async () => {
+      const created = store.create({ title: 'Valid' });
+      const res = await request(app).put(`/api/todos/${created.id}`).send({ completed: 'false' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe('Completed must be a boolean');
+      expect(store.getById(created.id)?.completed).toBe(false);
     });
   });
 
