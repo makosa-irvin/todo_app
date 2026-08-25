@@ -1,6 +1,6 @@
 import type { APIRequestContext } from '@playwright/test';
 
-const API_URL = 'http://localhost:4000/api';
+const API_URL = `${process.env.PLAYWRIGHT_API_URL || 'http://localhost:4000'}/api`;
 
 /**
  * The backend is a single shared in-memory store across the whole test
