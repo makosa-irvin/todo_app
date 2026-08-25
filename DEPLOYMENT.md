@@ -13,8 +13,8 @@ them together.
 2. In the Render dashboard: **New → Blueprint**, point it at the repo.
    Render reads `render.yaml` at the repo root and finds the `server/`
    service automatically (`rootDir: server`).
-3. Click **Apply**. Render runs `npm install && npm run build` then
-   `npm start`, and polls `/api/health` to know when it's live.
+3. Click **Apply**. Render runs `npm install --include=dev && npm run build`
+   then `npm start`, and polls `/api/health` to know when it's live.
 
 ### Option B — Manual web service
 
@@ -23,10 +23,21 @@ does change over time — check their current docs if `Apply` fails):
 
 1. **New → Web Service**, connect the repo.
 2. **Root Directory**: `server`
-3. **Build Command**: `npm install && npm run build`
+3. **Build Command**: `npm install --include=dev && npm run build`
 4. **Start Command**: `npm start`
 5. **Health Check Path**: `/api/health`
 6. Leave the plan on Free to start.
+
+**Why `--include=dev`**: Render sets `NODE_ENV=production` for the build
+environment (also set explicitly in `render.yaml`), and `npm install`
+skips `devDependencies` whenever `NODE_ENV=production` is set — including
+`typescript` itself, which the build needs. Without this flag, `tsc` isn't
+installed locally, and depending on what else is available in the build
+image, the build either fails outright or (worse) silently picks up a
+different TypeScript version than the one this project was tested against,
+which can surface as unrelated-looking compiler errors (e.g.
+`moduleResolution=node10 has been removed`, a TS 6+ error, on a project
+pinned to TS 5.6.3).
 
 Either way, no extra env vars are required — `server.ts` already reads
 `process.env.PORT`, which Render sets automatically. Once deployed, note
@@ -85,6 +96,23 @@ PLAYWRIGHT_API_URL=https://todo-api.onrender.com \
 npm test
 ```
 
-This runs the same 8 specs from `e2e/README.md` against the real deployed
+This runs the same 10 specs from `e2e/README.md` against the real deployed
 apps instead of localhost — useful right after a deploy, or in CI as a
 post-deploy check. Local runs (without these env vars) are unaffected.
+
+## Troubleshooting
+
+**`error TS5108: Option 'moduleResolution=node10' has been removed`** during
+the Render build — see the `--include=dev` note under step 1. If you're
+using the manual setup and already have this flag, double check the exact
+build command Render is actually running (dashboard → the service → Settings
+→ Build Command) hasn't drifted from what's documented here.
+
+**Build succeeds but the service immediately crashes on start** — check
+Render's logs for `Cannot find module '.../dist/server.js'`. This project's
+`tsconfig.json` scopes `rootDir`/`include` to `src/` specifically so `tsc`
+outputs `dist/server.js` directly (matching the `start` script); if you've
+customized the TypeScript config and broadened `include` back to the repo
+root (e.g. to include `tests/`), the compiled output will mirror that wider
+path instead (`dist/src/server.js`), and `npm start` will look in the wrong
+place.
