@@ -15,5 +15,6 @@
     "test:client": "npm test --workspace client",
     "test:e2e": "npm test --workspace e2e",
     "test:all": "npm run test && npm run test:e2e"
-  }
+  },
+  "allowScripts": {}
 }
