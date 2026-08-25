@@ -22,6 +22,7 @@ npm test                # everything
 npm run test:unit       # tests/unit only — fast, no HTTP
 npm run test:integration  # tests/integration only — full app via supertest
 npm run test:watch
+npm run test:coverage   # enforces a 70% floor; currently ~99% statements
 ```
 
 30 tests: 16 unit tests on `TodoStore` (`tests/unit/`), 14 integration tests on the API routes via supertest (`tests/integration/`).

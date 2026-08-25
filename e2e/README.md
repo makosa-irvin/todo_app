@@ -18,7 +18,7 @@ Playwright starts both servers for you (`server` on :4000, `client` on
 by hand first.
 
 ```bash
-npm test          # headless, all 8 specs
+npm test          # headless, all 10 specs
 npm run test:ui   # Playwright's interactive UI mode
 npm run test:headed
 ```
@@ -47,3 +47,16 @@ can't race with another spec's assertions.
 | Filter | All / Active / Completed tabs show the right subset |
 | Clear completed | Removes only completed todos |
 | Full lifecycle | Add → edit → complete → filter → delete, in one flow |
+| Reload persistence | Add a todo, reload the page, it's still there — proves state comes from the backend, not local component state |
+| Network failure | Aborts the `/api/todos` request via `context.route()`, confirms the `role="alert"` error message actually renders |
+
+## Also runs against a live deployment
+
+```bash
+PLAYWRIGHT_BASE_URL=https://your-app.vercel.app \
+PLAYWRIGHT_API_URL=https://todo-api.onrender.com \
+npm test
+```
+
+Skips starting local dev servers and points the browser + API cleanup
+helper at the given URLs instead — see the root `DEPLOYMENT.md`.

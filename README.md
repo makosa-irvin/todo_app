@@ -8,12 +8,26 @@ written before its implementation, run red, then made to pass.
 ```
 todo-app/
   package.json   npm workspaces root — `npm run test:server` / `test:client` / `test:e2e` from here
-  server/   Express API (in-memory store) — 30 tests
+  render.yaml    Render Blueprint for the API
+  DEPLOYMENT.md  Render + Vercel deployment guide
+  server/   Express API (in-memory store) — 30 tests, ≥70% coverage enforced
     tests/unit/          fast, isolated (TodoStore)
     tests/integration/   full app via supertest, real HTTP round-trip
-  client/   Next.js app (App Router)      — 37 tests, colocated in __tests__/ next to each module
-  e2e/      Playwright end-to-end tests   — 8 tests, spans both servers
+  client/   Next.js app (App Router)      — 45 tests, ≥70% coverage enforced
+    src/**/__tests__/            unit — one module, neighbors mocked
+    src/__tests__/integration/   Page + hook + api.ts together, only fetch mocked
+  e2e/      Playwright end-to-end tests   — 10 tests, real client + server, real browser
 ```
+
+This follows the standard test pyramid — many fast unit tests at the base,
+fewer integration tests in the middle, a handful of end-to-end tests at the
+top:
+
+| Layer | Where | What's real | What's mocked |
+|---|---|---|---|
+| **Unit** | `server/tests/unit`, `client/src/**/__tests__` | One module | Everything it talks to |
+| **Integration** | `server/tests/integration`, `client/src/__tests__/integration` | Server: the whole Express app + real store, over HTTP via supertest. Client: `Page` + `useTodos` + `api.ts` together | Server: nothing. Client: only `fetch` itself, via a tiny in-memory fake backend |
+| **E2E** | `e2e/tests` | Real Next.js server + real Express server + real Chromium browser | Nothing — this is the only layer that would catch, say, a CORS misconfiguration or a rewrite-proxy mistake |
 
 ## Quick start
 
@@ -46,21 +60,30 @@ npm run test:e2e     # needs `cd e2e && npm run install:browsers` once first
 npm run test:all     # server + client + e2e
 ```
 
-Or per-package as before: `cd server && npm test`, etc.
+Or per-package as before: `cd server && npm test`, etc. Coverage reports:
+`cd server && npm run test:coverage`, same in `client/`.
 
-68 unit/integration tests + 8 end-to-end tests, all passing:
+85 tests total across all three layers, all passing:
 
-| Suite | Tests | Covers |
-|---|---|---|
-| `server/tests/unit/todo.store.test.ts` | 16 | In-memory store: CRUD, validation, timestamps |
-| `server/tests/integration/todos.api.test.ts` | 14 | REST endpoints via supertest |
-| `client/src/lib/__tests__/api.test.ts` | 8 | Fetch wrapper, mocked `fetch`, including the NEXT_PUBLIC_API_URL prefix used in production |
-| `client/src/hooks/__tests__/useTodos.test.ts` | 10 | State hook: load/add/toggle/edit/delete/filter |
-| `client/src/components/ui/__tests__/button.test.tsx` | 4 | Button primitive |
-| `client/src/components/__tests__/AddTodoForm.test.tsx` | 4 | New-entry form |
-| `client/src/components/__tests__/TodoItem.test.tsx` | 7 | Row: toggle, delete, inline edit |
-| `client/src/components/__tests__/TodoList.test.tsx` | 5 | Filters, empty state, footer |
-| `e2e/tests/todo-app.spec.ts` | 8 | Full user flows against the real client + server over HTTP |
+| Suite | Tests | Layer | Covers |
+|---|---|---|---|
+| `server/tests/unit/todo.store.test.ts` | 16 | Unit | In-memory store: CRUD, validation, timestamps |
+| `server/tests/integration/todos.api.test.ts` | 14 | Integration | REST endpoints via supertest |
+| `client/src/lib/__tests__/api.test.ts` | 8 | Unit | Fetch wrapper, mocked `fetch`, including the NEXT_PUBLIC_API_URL prefix used in production |
+| `client/src/hooks/__tests__/useTodos.test.ts` | 10 | Unit | State hook: load/add/toggle/edit/delete/filter |
+| `client/src/components/ui/__tests__/button.test.tsx` | 4 | Unit | Button primitive |
+| `client/src/components/__tests__/AddTodoForm.test.tsx` | 4 | Unit | New-entry form |
+| `client/src/components/__tests__/TodoItem.test.tsx` | 7 | Unit | Row: toggle, delete, inline edit |
+| `client/src/components/__tests__/TodoList.test.tsx` | 5 | Unit | Filters, empty state, footer |
+| `client/src/__tests__/integration/todo-app.test.tsx` | 7 | Integration | Page + useTodos + api.ts wired together, network mocked |
+| `e2e/tests/todo-app.spec.ts` | 10 | E2E | Full user flows against the real client + server over HTTP, real browser |
+
+**Coverage**: both `server` and `client` enforce a 70% floor (statements/
+branches/functions/lines) via `coverageThreshold` in their Jest configs —
+`npm run test:coverage` fails the build if either drops below it. Both sit
+well above it today (server: 98.96%/84%/96%/98.87%, client: 94.73%/82.69%/
+98.07%/95.97%); the floor exists to catch future regressions, not because
+either is currently tight.
 
 The e2e suite needs its own browser binary (`npm run install:browsers`,
 one-time, needs internet access) and, unlike the other two suites, actually

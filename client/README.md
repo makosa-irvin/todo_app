@@ -24,10 +24,12 @@ npm run dev     # http://localhost:3000
 ```bash
 npm test
 npm run test:watch
+npm run test:coverage   # enforces a 70% floor; currently ~95%
 ```
 
-37 tests covering the API client, the `useTodos` state hook, and every
-component (Button, AddTodoForm, TodoItem, TodoList).
+45 tests: 38 unit (API client, `useTodos` hook, every component) plus 7
+integration tests in `src/__tests__/integration/` that render the real
+`Page` wired to the real hook and API client, mocking only `fetch` itself.
 
 ## Deploy
 
@@ -49,10 +51,25 @@ src/
     TodoList.tsx                Filter tabs, animated list, footer tally
   app/
     layout.tsx, page.tsx, globals.css
+  __tests__/integration/       Cross-module integration tests (see Testing below)
 ```
 
-Every module above has a co-located test written *before* its implementation
-(`__tests__/*.test.ts(x)`), following red → green TDD.
+Every module above also has a co-located test written *before* its
+implementation (`__tests__/*.test.ts(x)` next to it), following red → green
+TDD.
+
+## Testing layers
+
+- **Unit** (`src/**/__tests__/`): one module at a time, everything it
+  depends on is mocked. Fast, and pinpoints exactly what broke.
+- **Integration** (`src/__tests__/integration/`): `Page` + `useTodos` + the
+  real `api.ts` module all run together, with only `global.fetch` mocked
+  (a small in-memory fake backend). Catches wiring bugs unit tests can't —
+  e.g. a prop name mismatch between the hook and a component, or a state
+  update that works in isolation but not through the real hook.
+- **E2E** (`../e2e/`): real browser, real Next.js server, real Express
+  server. See `../e2e/README.md`.
+
 
 ## Design
 
