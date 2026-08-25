@@ -89,4 +89,18 @@ describe('api client', () => {
     );
     expect(result.removed).toBe(2);
   });
+
+  it('prefixes requests with NEXT_PUBLIC_API_URL when it is set, for calling a deployed backend directly', async () => {
+    process.env.NEXT_PUBLIC_API_URL = 'https://todo-api.onrender.com';
+    mockFetchOnce([sampleTodo]);
+
+    await fetchTodos();
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://todo-api.onrender.com/api/todos',
+      expect.objectContaining({ method: 'GET' }),
+    );
+
+    delete process.env.NEXT_PUBLIC_API_URL;
+  });
 });
