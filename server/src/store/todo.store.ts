@@ -22,7 +22,11 @@ export class TodoStore {
   }
 
   create(input: CreateTodoInput): Todo {
-    const title = input.title?.trim();
+    if (typeof input.title !== 'string') {
+      throw new Error('Title is required');
+    }
+
+    const title = input.title.trim();
     if (!title) {
       throw new Error('Title is required');
     }
@@ -45,6 +49,10 @@ export class TodoStore {
     if (!todo) return null;
 
     if (input.title !== undefined) {
+      if (typeof input.title !== 'string') {
+        throw new Error('Title must be a string');
+      }
+
       const title = input.title.trim();
       if (!title) {
         throw new Error('Title is required');
@@ -53,6 +61,9 @@ export class TodoStore {
     }
 
     if (input.completed !== undefined) {
+      if (typeof input.completed !== 'boolean') {
+        throw new Error('Completed must be a boolean');
+      }
       todo.completed = input.completed;
     }
 
