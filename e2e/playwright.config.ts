@@ -22,14 +22,14 @@ export default defineConfig({
       cwd: '../server',
       url: 'http://localhost:4000/api/health',
       reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
+      timeout: 60_000,
     },
     {
       command: 'npm run dev',
       cwd: '../client',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
+      timeout: 60_000,
     },
   ],
   projects: [
