@@ -1,13 +1,14 @@
 {
   "name": "e2e",
   "version": "1.0.0",
-  "description": "",
+  "description": "End-to-end behavior tests for the Todo application",
   "main": "index.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "playwright test",
+    "test": "npm run test:behavior-coverage && playwright test",
+    "test:behavior-coverage": "node scripts/check-behavior-coverage.mjs",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "install:browsers": "playwright install chromium"

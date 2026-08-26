@@ -6,11 +6,11 @@ test.beforeEach(async ({ request, page }) => {
   await page.goto('/');
 });
 
-test('shows the empty state when there are no todos', async ({ page }) => {
+test('[E2E-001] shows the empty state when there are no todos', async ({ page }) => {
   await expect(page.getByText(/nothing on the list/i)).toBeVisible();
 });
 
-test('adds a new todo and displays it in the list', async ({ page }) => {
+test('[E2E-002] adds a new todo and displays it in the list', async ({ page }) => {
   await page.getByPlaceholder(/add a task/i).fill('Buy groceries');
   await page.getByRole('button', { name: 'Add task' }).click();
 
@@ -18,7 +18,7 @@ test('adds a new todo and displays it in the list', async ({ page }) => {
   await expect(page.getByText(/1 left/i)).toBeVisible();
 });
 
-test('toggles a todo as complete', async ({ page }) => {
+test('[E2E-003] toggles a todo as complete', async ({ page }) => {
   await page.getByPlaceholder(/add a task/i).fill('Walk the dog');
   await page.getByRole('button', { name: 'Add task' }).click();
 
@@ -28,7 +28,7 @@ test('toggles a todo as complete', async ({ page }) => {
   await expect(page.getByText(/1 done/i)).toBeVisible();
 });
 
-test('edits a todo title via double-click', async ({ page }) => {
+test('[E2E-004] edits a todo title via double-click', async ({ page }) => {
   await page.getByPlaceholder(/add a task/i).fill('Old title');
   await page.getByRole('button', { name: 'Add task' }).click();
 
@@ -41,7 +41,7 @@ test('edits a todo title via double-click', async ({ page }) => {
   await expect(page.getByText('Old title')).not.toBeVisible();
 });
 
-test('deletes a todo', async ({ page }) => {
+test('[E2E-005] deletes a todo', async ({ page }) => {
   await page.getByPlaceholder(/add a task/i).fill('Temporary task');
   await page.getByRole('button', { name: 'Add task' }).click();
   await expect(page.getByText('Temporary task')).toBeVisible();
@@ -52,7 +52,7 @@ test('deletes a todo', async ({ page }) => {
   await expect(page.getByText(/nothing on the list/i)).toBeVisible();
 });
 
-test('filters todos by active and completed', async ({ page }) => {
+test('[E2E-006] filters todos by active and completed', async ({ page }) => {
   const input = page.getByPlaceholder(/add a task/i);
   const addButton = page.getByRole('button', { name: 'Add task' });
 
@@ -61,7 +61,6 @@ test('filters todos by active and completed', async ({ page }) => {
   await input.fill('Done task');
   await addButton.click();
 
-  // The second row's checkbox belongs to "Done task".
   await page.getByRole('checkbox', { name: 'Mark as done' }).nth(1).click();
 
   await page.getByRole('button', { name: 'Active', exact: true }).click();
@@ -77,7 +76,7 @@ test('filters todos by active and completed', async ({ page }) => {
   await expect(page.getByText('Done task')).toBeVisible();
 });
 
-test('clears all completed todos, leaving active ones untouched', async ({ page }) => {
+test('[E2E-007] clears all completed todos, leaving active ones untouched', async ({ page }) => {
   const input = page.getByPlaceholder(/add a task/i);
   const addButton = page.getByRole('button', { name: 'Add task' });
 
@@ -93,7 +92,7 @@ test('clears all completed todos, leaving active ones untouched', async ({ page 
   await expect(page.getByText('Keep me')).toBeVisible();
 });
 
-test('a full task lifecycle: add, edit, complete, filter, then delete', async ({ page }) => {
+test('[E2E-008] a full task lifecycle: add, edit, complete, filter, then delete', async ({ page }) => {
   const input = page.getByPlaceholder(/add a task/i);
   const addButton = page.getByRole('button', { name: 'Add task' });
 
@@ -118,7 +117,7 @@ test('a full task lifecycle: add, edit, complete, filter, then delete', async ({
   await expect(page.getByText(/nothing on the list/i)).toBeVisible();
 });
 
-test('persists todos across a page reload (real backend, not local component state)', async ({ page }) => {
+test('[E2E-009] persists todos across a page reload (real backend, not local component state)', async ({ page }) => {
   await page.getByPlaceholder(/add a task/i).fill('Persisted task');
   await page.getByRole('button', { name: 'Add task' }).click();
   await expect(page.getByText('Persisted task')).toBeVisible();
@@ -128,9 +127,7 @@ test('persists todos across a page reload (real backend, not local component sta
   await expect(page.getByText('Persisted task')).toBeVisible();
 });
 
-test('shows an inline error when the API is unreachable', async ({ page, context }) => {
-  // beforeEach already navigated successfully; abort the *next* load's
-  // request specifically so this test controls exactly which fetch fails.
+test('[E2E-010] shows an inline error when the API is unreachable', async ({ page, context }) => {
   await context.route('**/api/todos', (route) => route.abort());
 
   await page.goto('/');
