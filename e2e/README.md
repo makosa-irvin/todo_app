@@ -31,7 +31,7 @@ This keeps the human-readable Given/When/Then behavior separate from the browser
 Run:
 
 ```bash
-npm run test:behavior-coverage
+npm run test:coverage
 ```
 
 The gate compares the `@E2E-###` scenarios in the Gherkin files with the `[E2E-###]` Playwright tests. It fails when:
@@ -58,7 +58,7 @@ Playwright starts both servers for you (`server` on :4000 and `client` on :3000)
 
 ```bash
 npm test                       # behavior gate + all Playwright specs
-npm run test:behavior-coverage # Gherkin/Playwright mapping only
+npm run test:coverage # Gherkin/Playwright mapping only
 npm run test:ui                # Playwright interactive UI
 npm run test:headed            # headed browser
 ```
@@ -89,7 +89,7 @@ The current gate therefore requires **10/10 = 100% declared behavior coverage**.
 Start with the behavior rather than the Playwright implementation:
 
 1. Add a scenario to `features/todo.feature` with the next unique `@E2E-###` tag.
-2. Run `npm run test:behavior-coverage`. It should fail and identify the missing case.
+2. Run `npm run test:coverage`. It should fail and identify the missing case.
 3. Add the corresponding Playwright test using `[E2E-###]` in the title.
 4. Run `npm test` to satisfy the behavior gate and execute the browser test.
 
